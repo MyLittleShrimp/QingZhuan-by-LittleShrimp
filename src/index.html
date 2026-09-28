@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src blob: data:; connect-src 'none'; font-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="color-scheme" content="light">
+  <meta name="description" content="轻转 MDWord：本地离线的 Markdown 与 Word 双向转换工具，无需 AI，文件不上传，支持表格和图片。">
+  <title>轻转 MDWord · Markdown ↔ Word</title>
+  <style>/* APP_STYLES */</style>
+</head>
+<body data-default-mode="md-to-word">
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="轻转 MDWord · Markdown 与 Word 双向转换"><span class="brand-icon" aria-hidden="true">M<span>↘</span></span><span class="brand-name">轻转 <span class="brand-english">MDWord</span></span><span class="version">LOCAL</span></a>
+    <span class="offline"><span aria-hidden="true"></span>离线运行 · 文件不上传</span>
+  </header>
+  <main>
+    <section class="intro">
+      <div><div class="eyebrow">Markdown ↔ Word，一键互转</div><h1 id="hero-title">Markdown，轻松变成 Word<span>。</span></h1><p id="hero-description">放入你的 Markdown，一键得到排版整洁、表格可编辑的 Word 文档。</p></div>
+      <div class="format-route" aria-hidden="true"><span class="file-badge">MD</span><span class="route-arrow">⟶</span><span class="file-badge word-badge">W</span></div>
+    </section>
+
+    <div class="mode-switch" role="group" aria-label="转换方向"><button id="mode-md" class="mode-button active" type="button" aria-pressed="true">MD → Word</button><button id="mode-word" class="mode-button" type="button" aria-pressed="false">Word → MD</button><span>两个方向，各自保留当前内容</span></div>
+    <div class="workspace" id="workspace">
+      <section class="panel editor-panel" id="source-panel" aria-labelledby="editor-heading">
+        <div class="panel-heading"><h2 id="editor-heading"><span class="step">01</span> Markdown 内容</h2><div class="panel-actions"><button class="text-button" id="sample-button" type="button">载入示例</button><span class="action-divider"></span><button class="text-button muted" id="clear-button" type="button">清空</button></div></div>
+        <label class="drop-zone" id="drop-zone" for="file-input" tabindex="0" role="button" aria-label="选择 Markdown 文件，也可以将文件拖入此处">
+          <svg width="27" height="27" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 18H5a3 3 0 0 1-.8-5.89 7 7 0 0 1 13.6 0A3 3 0 0 1 17 18h-2M12 20V10m0 0-3 3m3-3 3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span id="drop-description"><strong>选择文件</strong>，或将 Markdown 拖到这里<small>.md / .markdown / .txt，最大 5 MB</small></span>
+        </label>
+        <input id="file-input" type="file" accept=".md,.markdown,.txt,text/markdown,text/plain" hidden>
+        <div class="editor-label"><span id="source-label">示例内容</span><span id="editor-tip">也可以直接粘贴、编辑</span></div>
+        <div class="panel-content" id="editor-content">
+          <div class="editor-label" id="result-editor-label" hidden><span>Markdown 源码</span><span>可直接编辑、复制</span></div>
+          <textarea id="editor" spellcheck="false" aria-label="Markdown 内容" placeholder="# 在这里开始\n\n粘贴 Markdown 内容，或从上方导入文件。"></textarea>
+          <div class="editor-bottom"><span id="stats">0 字符 · 0 个表格</span><button class="text-button" id="image-button" type="button" title="选择 Markdown 引用的本地图片，按文件名匹配">添加本地图片<span id="image-count"></span></button><button class="text-button" id="copy-button" type="button" hidden>复制 Markdown</button></div>
+        </div>
+        <input id="image-input" type="file" accept="image/png,image/jpeg,image/gif,image/bmp" multiple hidden>
+      </section>
+
+      <section class="panel preview-panel" id="result-panel" aria-labelledby="preview-heading">
+        <div class="panel-heading"><h2 id="preview-heading"><span class="step">02</span> 效果预览</h2><span class="preview-tag" id="result-tag">基础排版</span></div>
+        <div class="panel-content" id="preview-content">
+          <div class="preview-scroll" id="preview-scroll"><article class="document-preview" id="preview" aria-label="文档内容预览"></article><div class="empty-preview" id="empty-preview" hidden><span aria-hidden="true">↖</span><h3>从一段 Markdown 开始</h3><p>导入文件或粘贴内容，预览会显示在这里。</p></div></div>
+          <div class="preview-bottom"><span class="tiny-dot" aria-hidden="true"></span><span id="preview-note">保留内容结构，实际分页以 Word 为准</span></div>
+        </div>
+      </section>
+    </div>
+
+    <div class="notice" id="notice" role="status" hidden></div>
+    <section class="export-bar" aria-label="导出设置">
+      <div class="export-fields"><div class="filename-field"><label for="filename">文件名称</label><div class="filename-input"><input id="filename" value="项目周报" maxlength="100" autocomplete="off" aria-label="导出文件名称"><span id="file-extension">.docx</span></div></div><div class="page-field" id="page-field"><label for="orientation">页面</label><select id="orientation"><option value="portrait">A4 纵向</option><option value="landscape">A4 横向 · 宽表格</option></select></div><p id="word-export-note" class="export-note" hidden>纯文本导出 .md<br>含图片时打包为 ZIP</p></div>
+      <div class="export-action"><span class="shortcut">Ctrl / ⌘ + Enter</span><button class="primary-button" id="export-button" type="button"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 15v5h14v-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="export-label">导出 Word</span></button></div>
+    </section>
+    <div class="status-line"><p id="status" role="status" aria-live="polite">已载入示例，替换为你的内容即可转换。</p><span>无需账号 · 无需 AI · 不改写内容</span></div>
+    <footer><span>支持标题、列表、表格、引用、代码和链接</span><details><summary>使用说明</summary><div class="help-content"><p>MD → Word：导入或粘贴 Markdown，点击「导出 Word」。宽表格可以选择 A4 横向。</p><p>Word → MD：导入 .docx，自动提取 Markdown。可以继续编辑、复制或下载；如含图片，下载 ZIP 后解压，保持 Markdown 与 images 文件夹的相对位置。</p><p>Word 表格以首行为表头，单元格换行转为 &lt;br&gt;；合并单元格展开为普通网格并提示。字体、分页、页眉页脚等版式不保留。</p><p>旧版 .doc 或加密文档，请先用 Word / LibreOffice 另存为未加密的 .docx。扫描件不进行 OCR；Word 公式、SmartArt、图表等复杂对象可能无法提取，请留意转换提示。</p><p>MD → Word 的本地图片请通过「添加本地图片」选择 PNG、JPG、GIF 或 BMP 文件。远程图片不会联网下载。</p><p>Markdown 公式、Mermaid 和 HTML 等扩展语法不做专门渲染。内容仅保留在页面内存中，关闭页面后不会保存；两个转换方向的草稿可分别保留到本次页面关闭。</p></div></details></footer>
+  </main>
+  <script>/* APP_SCRIPT */</script>
+</body>
+</html>

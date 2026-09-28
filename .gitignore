@@ -1,0 +1,11 @@
+node_modules/
+.npm-cache/
+.test-build/
+qa/
+release/
+# Local machine setup helpers are not part of the application.
+scripts/install-libreoffice.ps1
+scripts/configure-libreoffice.ps1
+.DS_Store
+Thumbs.db
+*.log
